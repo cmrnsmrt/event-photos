@@ -8,8 +8,39 @@
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
         .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         h2 { text-align: center; }
-        input[type="file"] { width: 100%; margin-bottom: 1em; }
-        button { width: 100%; padding: 0.7em; background: #EB473D; color: #fff; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; }
+        input[type="file"] {
+            display: none;
+        }
+        .file-label {
+            display: block;
+            width: 100%;
+            margin-bottom: 1em;
+            padding: 0.7em;
+            background: #EB473D;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+        .file-label:hover {
+            background: #c53a2f;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 0.7em;
+            background: #EB473D;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
         button:hover { background: #c53a2f; }
     </style>
 </head>
@@ -25,9 +56,22 @@
         {% endif %}
         <h2>Upload Your SmartFest Photos!</h2>
         <form action="/upload" enctype="multipart/form-data" method="post">
-            <input type="file" name="file" accept="image/*" required multiple>
+            <label for="file-upload" class="file-label">Click to choose photos to upload</label>
+            <input id="file-upload" type="file" name="file" accept="image/*" required multiple>
             <button type="submit">Upload selected photos</button>
         </form>
+        <script>
+            // Show selected file names on the label (optional)
+            const fileInput = document.getElementById('file-upload');
+            const fileLabel = document.querySelector('.file-label');
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    fileLabel.textContent = this.files.length === 1 ? this.files[0].name : `${this.files.length} photos selected. Click to change.`;
+                } else {
+                    fileLabel.textContent = 'Click to choose photos to upload';
+                }
+            });
+        </script>
     </div>
 </body>
 </html>
