@@ -1,8 +1,8 @@
 # Event Photo Upload Web App
 
-This project is a containerized Python web application that allows users to upload photos during an event. No authentication is required. Uploaded photos are saved directly to an Azure Storage Account container. The app is designed for easy deployment on Azure. I was asked to create this the morning of the event... 
+This project is a containerized Python web application that allows users to upload photos during an event. No authentication is required. Uploaded photos are saved directly to an Azure Storage Account container. The app is designed for easy deployment on Azure. I was asked to create this the morning of the event...
 
-## Methodology
+## Methodology
 1. Create web application that connects Azure Blob Storage and uploads photos with event branding, super simple.
 2. Containerise.
 3. Build and test locally.
