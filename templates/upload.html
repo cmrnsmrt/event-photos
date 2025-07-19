@@ -15,10 +15,13 @@
 </head>
 <body>
     <div class="container">
-        <h2>Upload Your Event Photo</h2>
+        <div style="text-align:center; margin-bottom:1em;">
+            <img src="/static/images/smartfest.png" alt="Event Photo" style="max-width:100%; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+        </div>
+        <h2>Upload Your SmartFest Photos!</h2>
         <form action="/upload" enctype="multipart/form-data" method="post">
             <input type="file" name="file" accept="image/*" required>
-            <button type="submit">Upload Photo</button>
+            <button type="submit">Upload selected photos</button>
         </form>
     </div>
 </body>
