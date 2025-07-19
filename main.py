@@ -22,13 +22,14 @@ def upload_form(request: Request, msg: str = None):
     return templates.TemplateResponse("upload.html", {"request": request, "msg": msg})
 
 @app.post("/upload", response_class=HTMLResponse)
-def upload_photo(request: Request, file: UploadFile = File(...)):
+def upload_photo(request: Request, file: list[UploadFile] = File(...)):
     if not blob_service_client:
         return HTMLResponse("Azure Storage not configured.", status_code=500)
     try:
-        filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{file.filename}"
-        blob_client = blob_service_client.get_blob_client(container=AZURE_CONTAINER_NAME, blob=filename)
-        blob_client.upload_blob(file.file, overwrite=True)
+        for f in file:
+            filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{f.filename}"
+            blob_client = blob_service_client.get_blob_client(container=AZURE_CONTAINER_NAME, blob=filename)
+            blob_client.upload_blob(f.file, overwrite=True)
         # Show confirmation message after upload
         return templates.TemplateResponse(
             "upload.html",
