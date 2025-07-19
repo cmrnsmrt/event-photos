@@ -18,8 +18,8 @@ if AZURE_CONNECTION_STRING:
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECTION_STRING)
 
 @app.get("/", response_class=HTMLResponse)
-def upload_form(request: Request):
-    return templates.TemplateResponse("upload.html", {"request": request})
+def upload_form(request: Request, msg: str = None):
+    return templates.TemplateResponse("upload.html", {"request": request, "msg": msg})
 
 @app.post("/upload", response_class=HTMLResponse)
 def upload_photo(request: Request, file: UploadFile = File(...)):
@@ -29,6 +29,10 @@ def upload_photo(request: Request, file: UploadFile = File(...)):
         filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{file.filename}"
         blob_client = blob_service_client.get_blob_client(container=AZURE_CONTAINER_NAME, blob=filename)
         blob_client.upload_blob(file.file, overwrite=True)
-        return RedirectResponse("/", status_code=303)
+        # Show confirmation message after upload
+        return templates.TemplateResponse(
+            "upload.html",
+            {"request": request, "msg": "Photos uploaded successfully!"}
+        )
     except Exception as e:
         return HTMLResponse(f"Upload failed: {e}", status_code=500)
