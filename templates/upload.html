@@ -42,6 +42,29 @@
             box-sizing: border-box;
         }
         button:hover { background: #c53a2f; }
+</style>
+    <style>
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 2em;
+        }
+        .gallery img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            background: #eee;
+        }
+        .gallery-title {
+            margin-top: 2em;
+            text-align: center;
+            color: #333;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -60,18 +83,67 @@
             <input id="file-upload" type="file" name="file" accept="image/*" required multiple>
             <button type="submit">Upload selected photos</button>
         </form>
-        <script>
-            // Show selected file names on the label (optional)
-            const fileInput = document.getElementById('file-upload');
-            const fileLabel = document.querySelector('.file-label');
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    fileLabel.textContent = this.files.length === 1 ? this.files[0].name : `${this.files.length} photos selected. Click to change.`;
-                } else {
-                    fileLabel.textContent = 'Click to choose photos to upload';
-                }
-            });
         </script>
+        {% if image_urls and image_urls|length > 0 %}
+        <script id="image-urls-json" type="application/json">{{ image_urls|tojson|safe }}</script>
+        <div class="gallery">
+            {% for url in image_urls %}
+                <img src="{{ url }}" alt="Uploaded photo" onclick="enlargeImage('{{ url }}')">
+            {% endfor %}
+        </div>
+        <div id="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); align-items:center; justify-content:center;">
+            <span onclick="closeModal()" style="position:absolute;top:30px;right:40px;font-size:2.5em;color:#fff;cursor:pointer;font-weight:bold;">&times;</span>
+            <div style="position:relative; width:80vw; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <img id="modal-img" src="" style="max-width:100%; max-height:70vh; border-radius:10px; box-shadow:0 2px 16px rgba(0,0,0,0.3); display:block; margin:auto;">
+                <div style="display:flex; gap:1em; justify-content:center; margin-top:1.5em;">
+                    <button id="left-btn" onclick="prevImage(event)" style="min-width:48px; padding:0.7em 1.5em; background:#EB473D; color:#fff; border:none; border-radius:4px; font-size:1.5em; cursor:pointer; box-sizing:border-box;">&#8592;</button>
+                    <button id="right-btn" onclick="nextImage(event)" style="min-width:48px; padding:0.7em 1.5em; background:#EB473D; color:#fff; border:none; border-radius:4px; font-size:1.5em; cursor:pointer; box-sizing:border-box;">&#8594;</button>
+                </div>
+            </div>
+        </div>
+        <script>
+        const imageUrls = JSON.parse(document.getElementById('image-urls-json').textContent);
+        let currentIndex = 0;
+
+        function enlargeImage(url) {
+            currentIndex = imageUrls.indexOf(url);
+            showImage();
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function showImage() {
+            document.getElementById('modal-img').src = imageUrls[currentIndex];
+            // Hide left button if at first image, right if at last
+            document.getElementById('left-btn').style.display = currentIndex > 0 ? 'block' : 'none';
+            document.getElementById('right-btn').style.display = currentIndex < imageUrls.length - 1 ? 'block' : 'none';
+        }
+
+        function prevImage(e) {
+            e.stopPropagation();
+            if (currentIndex > 0) {
+                currentIndex--;
+                showImage();
+            }
+        }
+
+        function nextImage(e) {
+            e.stopPropagation();
+            if (currentIndex < imageUrls.length - 1) {
+                currentIndex++;
+                showImage();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modal-img').src = '';
+        }
+
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        </script>
+        {% endif %}
     </div>
 </body>
 </html>
