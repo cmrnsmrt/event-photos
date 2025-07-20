@@ -30,5 +30,6 @@ jobs:
         run: docker build -t cmrnsmrt/eventpics:latest -t eventpicsacr.azurecr.io/eventpics:latest .
 
       - name: Push Docker image
-        run: docker push cmrnsmrt/eventpics:latest
-        run: docker push eventpicsacr.azurecr.io/eventpics:latest
+        run: |
+          docker push cmrnsmrt/eventpics:latest
+          docker push eventpicsacr.azurecr.io/eventpics:latest
